@@ -1,9 +1,13 @@
 let express = require("express");
 let users = require("./state.js").users;
-
+const bodyParser = require("body-parser");
+let ContactRoutes = require("./routes/ContactRoutes");
 const app = express();
 
+
+app.use(ContactRoutes)
 app.use(express.static('public'))
+app.use(bodyParser.json());
 
 // app.use(function(req,res,next)
 // {
@@ -25,17 +29,23 @@ app.use(express.static('public'))
 //  return res.send("what do you want?");
 // });
 
+
+//make snippets for these (get,post, etc.)
 app.get("/users", function(req, res, next)
 {
     return res.json({users});
 });
-app.get("/users/1", function(req, res, next)
+app.get("/users/:userId", function(req, res, next)
 {
-    return res.json(users[0]);
+   
+     res.json(users.find(user => user._id == req.params.userId));
 });
+
 app.post("/users", function(req, res, next)
 {
-    return res.json(users.push({}));
+    let newUser = req.body;
+    users.push(newUser);
+    res.json(newUser);
 });
 app.put("/users/1", function(req, res, next)
 {
